@@ -28,7 +28,7 @@ namespace Xero.Products.Api.Repository
         {
             using (IDbConnection connection = _connectionFactory.CreateConnection())
             {
-                return await connection.QueryFirstOrDefaultAsync<Product>($"select * from Products where Id = '{id.ToString().ToUpper()}'");
+                return await connection.QueryFirstOrDefaultAsync<Product>($"select * from Products where Id = '{id}' collate nocase");
             }
         }
     }
