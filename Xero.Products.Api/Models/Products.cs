@@ -29,7 +29,7 @@ namespace Xero.Products.Api.Models
             while (rdr.Read())
             {
                 var id = Guid.Parse(rdr.GetString(0));
-                Items.Add(new Product(id));
+                //Items.Add(new Product(id));
             }
         }
     }

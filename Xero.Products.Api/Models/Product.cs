@@ -1,12 +1,21 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace Xero.Products.Api.Models
 {
     public class Product
     {
+        public Product()
+        {
+            Id = Guid.NewGuid();
+            IsNew = true;
+        }
+
+        [Required]
         public Guid Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
         public string Description { get; set; }
@@ -16,32 +25,6 @@ namespace Xero.Products.Api.Models
         public decimal DeliveryPrice { get; set; }
 
         [JsonIgnore] public bool IsNew { get; }
-
-        public Product()
-        {
-            Id = Guid.NewGuid();
-            IsNew = true;
-        }
-
-        public Product(Guid id)
-        {
-            IsNew = true;
-            var conn = Helpers.NewConnection();
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = $"select * from Products where id = '{id}' collate nocase";
-
-            var rdr = cmd.ExecuteReader();
-            if (!rdr.Read())
-                return;
-
-            IsNew = false;
-            Id = Guid.Parse(rdr["Id"].ToString());
-            Name = rdr["Name"].ToString();
-            Description = (DBNull.Value == rdr["Description"]) ? null : rdr["Description"].ToString();
-            Price = decimal.Parse(rdr["Price"].ToString());
-            DeliveryPrice = decimal.Parse(rdr["DeliveryPrice"].ToString());
-        }
 
         public void Save()
         {

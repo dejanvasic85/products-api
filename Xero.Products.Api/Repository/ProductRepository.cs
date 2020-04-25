@@ -16,6 +16,34 @@ namespace Xero.Products.Api.Repository
             _connectionFactory = connectionFactory;
         }
 
+        public async Task CreateProduct(Product product)
+        {
+            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            {
+                string insertQuery = @"insert into Products (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
+
+                await connection.ExecuteAsync(insertQuery, new
+                {
+                    product.Id,
+                    product.Name,
+                    product.Description,
+                    product.Price,
+                    product.DeliveryPrice,
+                });
+            }
+        }
+
+        public async Task DeleteProduct(Guid id)
+        {
+            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            {
+                await connection.ExecuteAsync("delete from Products where Id = @Id", new
+                {
+                    Id = id
+                });
+            }
+        }
+
         public async Task<IEnumerable<Product>> GetAllProducts()
         {
             using (IDbConnection connection = _connectionFactory.CreateConnection())

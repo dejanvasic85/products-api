@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Xero.Products.Api.Configuration;
 using Xero.Products.Api.Repository;
 using Xero.Products.Api.Repository.DapperConfig;
-using Xero.Products.Api.Services;
 
 namespace Xero.Products.Api
 {
@@ -26,7 +25,6 @@ namespace Xero.Products.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IConnectionFactory, ConnectionFactory>();
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IProductService, ProductService>();
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
 
             // Register type handlers for dapper

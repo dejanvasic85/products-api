@@ -1,12 +1,9 @@
 ﻿# Xero Products API
 
 
-### Other Improvements:
+### Improvements (todo):
 
-- Services and Repository could move to separate projects to improve code sharing if other applications need to use them.
-
-
-### Todo 
-
+- Repository could move to separate project to improve code sharing
 - Add request logging (potentially including the request id tracing)
-- Unit of Work pattern?
+- Unit of Work pattern
+- Validation

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xero.Products.Api.Models;
-using Xero.Products.Api.Services;
+using Xero.Products.Api.Repository;
 
 namespace Xero.Products.Api.Controllers
 {
@@ -11,58 +11,87 @@ namespace Xero.Products.Api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IProductService _productService;
+        private IProductRepository _productRepository;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductRepository productRepository)
         {
-            _productService = productService;
+            _productRepository = productRepository;
         }
 
         [HttpGet]
-        public Task<IEnumerable<Product>> Get()
+        public async Task<IEnumerable<Product>> Get()
         {
-            return _productService.GetProducts();
+            return await _productRepository.GetAllProducts();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<ActionResult<Product>> Get(Guid id)
         {
-            var product = await _productService.GetProductById(id);
+            var product = await _productRepository.GetProductById(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return product;
         }
 
         [HttpPost]
-        public void Post(Product product)
+        public async Task<ActionResult<Product>> Post(Product product)
         {
-            product.Save();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var existingProduct = await _productRepository.GetProductById(product.Id);
+            if (existingProduct != null)
+            {
+                return BadRequest(new
+                {
+                    Error = "The product ID already exists."
+                });
+            }
+
+            await _productRepository.CreateProduct(product);
+
+            return CreatedAtAction(nameof(Get), new { product.Id }, product);
         }
 
         [HttpPut("{id}")]
         public void Update(Guid id, Product product)
         {
-            var orig = new Product(id)
-            {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
+            //if (id != product.Id)
+            //{
+            //    return BadRequest();
+            //}
 
-            if (!orig.IsNew)
-                orig.Save();
+            //var orig = new Product(id)
+            //{
+            //    Name = product.Name,
+            //    Description = product.Description,
+            //    Price = product.Price,
+            //    DeliveryPrice = product.DeliveryPrice
+            //};
+
+            //if (!orig.IsNew)
+            //    orig.Save();
         }
 
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public async Task<ActionResult<Product>> Delete(Guid id)
         {
-            var product = new Product(id);
-            product.Delete();
+            var product = await _productRepository.GetProductById(id);
+            
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            await _productRepository.DeleteProduct(id);
+
+            return product;
         }
 
         [HttpGet("{productId}/options")]
