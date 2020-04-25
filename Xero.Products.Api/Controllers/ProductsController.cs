@@ -42,11 +42,6 @@ namespace Xero.Products.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> Post(Product product)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var existingProduct = await _productRepository.GetProductById(product.Id);
             if (existingProduct != null)
             {
@@ -108,7 +103,7 @@ namespace Xero.Products.Api.Controllers
                 return NotFound();
             }
 
-            var options = await _productOptionRepository.GetAllProductOptions(productId);
+            var options = await _productOptionRepository.GetProductOptions(productId);
 
             return Ok(options);
         }
@@ -127,10 +122,17 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpPost("{productId}/options")]
-        public void CreateOption(Guid productId, ProductOption option)
+        public async Task<ActionResult<ProductOption>> CreateOption(Guid productId, ProductOption option)
         {
-            option.ProductId = productId;
-            option.Save();
+            var existingOption = await _productOptionRepository.GetProductOption(productId, option.Id);
+            if (existingOption != null)
+            {
+                return BadRequest();
+            }
+
+            await _productOptionRepository.CreateProductOption(option);
+
+            return CreatedAtAction(nameof(GetOption), new { productId, id = option.Id }, option);
         }
 
         [HttpPut("{productId}/options/{id}")]
