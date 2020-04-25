@@ -12,10 +12,12 @@ namespace Xero.Products.Api.Controllers
     public class ProductsController : ControllerBase
     {
         private IProductRepository _productRepository;
+        private IProductOptionRepository _productOptionRepository;
 
-        public ProductsController(IProductRepository productRepository)
+        public ProductsController(IProductRepository productRepository, IProductOptionRepository productOptionRepository)
         {
             _productRepository = productRepository;
+            _productOptionRepository = productOptionRepository;
         }
 
         [HttpGet]
@@ -97,9 +99,18 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet("{productId}/options")]
-        public ProductOptions GetOptions(Guid productId)
+        public async Task<ActionResult<IEnumerable<ProductOption>>> GetOptions(Guid productId)
         {
-            return new ProductOptions(productId);
+            var product = await _productRepository.GetProductById(productId);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var options = await _productOptionRepository.GetAllProductOptions(productId);
+
+            return Ok(options);
         }
 
         [HttpGet("{productId}/options/{id}")]

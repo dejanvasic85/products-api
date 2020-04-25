@@ -25,6 +25,7 @@ namespace Xero.Products.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IConnectionFactory, ConnectionFactory>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductOptionRepository, ProductOptionRepository>();
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
 
             // Register type handlers for dapper

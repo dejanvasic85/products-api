@@ -22,14 +22,7 @@ namespace Xero.Products.Api.Repository
             {
                 string insertQuery = @"insert into Products (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
 
-                await db.ExecuteAsync(insertQuery, new
-                {
-                    product.Id,
-                    product.Name,
-                    product.Description,
-                    product.Price,
-                    product.DeliveryPrice,
-                });
+                await db.ExecuteAsync(insertQuery, product);
             }
         }
 
@@ -65,16 +58,6 @@ namespace Xero.Products.Api.Repository
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
                 var updateQuery = "update Products set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id collate nocase";
-
-                //await db.ExecuteAsync(updateQuery, new
-                //{
-                //    product.Id,
-                //    product.Name,
-                //    product.Description,
-                //    product.Price,
-                //    product.DeliveryPrice,
-                //});
-
                 await db.ExecuteAsync(updateQuery, product);
             }
         }
