@@ -48,10 +48,7 @@ namespace Xero.Products.Api.Controllers
             var existingProduct = await _productRepository.GetProductById(product.Id);
             if (existingProduct != null)
             {
-                return BadRequest(new
-                {
-                    Error = "The product ID already exists."
-                });
+                return BadRequest();
             }
 
             await _productRepository.CreateProduct(product);
@@ -60,30 +57,35 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public void Update(Guid id, Product product)
+        public async Task<ActionResult> Update(Guid id, Product product)
         {
-            //if (id != product.Id)
-            //{
-            //    return BadRequest();
-            //}
+            if (id != product.Id)
+            {
+                return BadRequest();
+            }
 
-            //var orig = new Product(id)
-            //{
-            //    Name = product.Name,
-            //    Description = product.Description,
-            //    Price = product.Price,
-            //    DeliveryPrice = product.DeliveryPrice
-            //};
+            var original = await _productRepository.GetProductById(id);
 
-            //if (!orig.IsNew)
-            //    orig.Save();
+            if (original == null)
+            {
+                return NotFound();
+            }
+
+            original.Name = product.Name;
+            original.Description = product.Description;
+            original.Price = product.Price;
+            original.DeliveryPrice = product.DeliveryPrice;
+
+            await _productRepository.UpdateProduct(original);
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> Delete(Guid id)
         {
             var product = await _productRepository.GetProductById(id);
-            
+
             if (product == null)
             {
                 return NotFound();

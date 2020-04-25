@@ -11,5 +11,6 @@ namespace Xero.Products.Api.Repository
         Task<Product> GetProductById(Guid id);
         Task CreateProduct(Product product);
         Task DeleteProduct(Guid id);
+        Task UpdateProduct(Product original);
     }
 }

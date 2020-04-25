@@ -6,11 +6,17 @@ namespace Xero.Products.Api.Models
 {
     public class Product
     {
-        public Product()
+       
+        public Product(Guid id)
         {
-            Id = Guid.NewGuid();
-            IsNew = true;
+            Id = id;
         }
+
+        public Product() : this(Guid.NewGuid())
+        {
+
+        }
+
 
         [Required]
         public Guid Id { get; set; }
@@ -23,34 +29,5 @@ namespace Xero.Products.Api.Models
         public decimal Price { get; set; }
 
         public decimal DeliveryPrice { get; set; }
-
-        [JsonIgnore] public bool IsNew { get; }
-
-        public void Save()
-        {
-            var conn = Helpers.NewConnection();
-            conn.Open();
-            var cmd = conn.CreateCommand();
-
-            cmd.CommandText = IsNew
-                ? $"insert into Products (id, name, description, price, deliveryprice) values ('{Id}', '{Name}', '{Description}', {Price}, {DeliveryPrice})"
-                : $"update Products set name = '{Name}', description = '{Description}', price = {Price}, deliveryprice = {DeliveryPrice} where id = '{Id}' collate nocase";
-
-            conn.Open();
-            cmd.ExecuteNonQuery();
-        }
-
-        public void Delete()
-        {
-            foreach (var option in new ProductOptions(Id).Items)
-                option.Delete();
-
-            var conn = Helpers.NewConnection();
-            conn.Open();
-            var cmd = conn.CreateCommand();
-
-            cmd.CommandText = $"delete from Products where id = '{Id}' collate nocase";
-            cmd.ExecuteNonQuery();
-        }
     }
 }

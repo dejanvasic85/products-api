@@ -18,11 +18,11 @@ namespace Xero.Products.Api.Repository
 
         public async Task CreateProduct(Product product)
         {
-            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            using (IDbConnection db = _connectionFactory.CreateConnection())
             {
                 string insertQuery = @"insert into Products (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
 
-                await connection.ExecuteAsync(insertQuery, new
+                await db.ExecuteAsync(insertQuery, new
                 {
                     product.Id,
                     product.Name,
@@ -35,9 +35,9 @@ namespace Xero.Products.Api.Repository
 
         public async Task DeleteProduct(Guid id)
         {
-            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                await connection.ExecuteAsync("delete from Products where Id = @Id", new
+                await db.ExecuteAsync("delete from Products where Id = @Id collate nocase", new
                 {
                     Id = id
                 });
@@ -46,17 +46,36 @@ namespace Xero.Products.Api.Repository
 
         public async Task<IEnumerable<Product>> GetAllProducts()
         {
-            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                return await connection.QueryAsync<Product>("select * from Products");
+                return await db.QueryAsync<Product>("select * from Products");
             }
         }
 
         public async Task<Product> GetProductById(Guid id)
         {
-            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                return await connection.QueryFirstOrDefaultAsync<Product>($"select * from Products where Id = '{id}' collate nocase");
+                return await db.QueryFirstOrDefaultAsync<Product>($"select * from Products where Id = '{id}' collate nocase");
+            }
+        }
+
+        public async Task UpdateProduct(Product product)
+        {
+            using (IDbConnection db = _connectionFactory.CreateConnection())
+            {
+                var updateQuery = "update Products set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id collate nocase";
+
+                //await db.ExecuteAsync(updateQuery, new
+                //{
+                //    product.Id,
+                //    product.Name,
+                //    product.Description,
+                //    product.Price,
+                //    product.DeliveryPrice,
+                //});
+
+                await db.ExecuteAsync(updateQuery, product);
             }
         }
     }
