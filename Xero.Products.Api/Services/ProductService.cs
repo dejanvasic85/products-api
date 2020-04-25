@@ -15,6 +15,11 @@ namespace Xero.Products.Api.Services
             _productRepository = productRepository;
         }
 
+        public Task<Product> GetProductById(Guid id)
+        {
+            return _productRepository.GetProductById(id);
+        }
+
         public Task<IEnumerable<Product>> GetProducts()
         {
             return _productRepository.GetAllProducts();

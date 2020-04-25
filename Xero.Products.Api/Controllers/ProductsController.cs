@@ -25,13 +25,16 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public Product Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            var product = new Product(id);
-            if (product.IsNew)
-                throw new Exception();
+            var product = await _productService.GetProductById(id);
 
-            return product;
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
         }
 
         [HttpPost]
