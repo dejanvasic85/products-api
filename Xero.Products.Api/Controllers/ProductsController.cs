@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xero.Products.Api.Models;
+using Xero.Products.Api.Services;
 
 namespace Xero.Products.Api.Controllers
 {
@@ -8,10 +11,19 @@ namespace Xero.Products.Api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        [HttpGet]
-        public Xero.Products.Api.Models.Products Get()
+        private IProductService _productService;
+
+        public ProductsController(IProductService productService)
         {
-            return new Xero.Products.Api.Models.Products();
+            _productService = productService;
+        }
+
+        [HttpGet]
+        public Task<IList<Product>> Get()
+        {
+            return _productService.GetProducts();
+
+            //return new Xero.Products.Api.Models.Products();
         }
 
         [HttpGet("{id}")]
