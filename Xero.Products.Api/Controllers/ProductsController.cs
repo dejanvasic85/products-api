@@ -136,23 +136,40 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpPut("{productId}/options/{id}")]
-        public void UpdateOption(Guid id, ProductOption option)
+        public async Task<ActionResult> UpdateOption(Guid productId, Guid id, ProductOption option)
         {
-            var orig = new ProductOption(id)
+            if (id != option.Id)
             {
-                Name = option.Name,
-                Description = option.Description
-            };
+                return BadRequest();
+            }
 
-            if (!orig.IsNew)
-                orig.Save();
+            var originalOption = await _productOptionRepository.GetProductOption(productId, id);
+            if (originalOption == null)
+            {
+                return NotFound();
+            }
+
+            originalOption.Name = option.Name;
+            originalOption.Description = option.Description;
+
+            await _productOptionRepository.UpdateProductOption(option);
+
+            return NoContent();
         }
 
         [HttpDelete("{productId}/options/{id}")]
-        public void DeleteOption(Guid id)
+        public async Task<ActionResult<ProductOption>> DeleteOption(Guid productId, Guid id)
         {
-            var opt = new ProductOption(id);
-            opt.Delete();
+            var productOption = await _productOptionRepository.GetProductOption(productId, id);
+
+            if (productOption == null)
+            {
+                return NotFound();
+            }
+
+            await _productOptionRepository.Delete(id);
+
+            return productOption;
         }
     }
 }
