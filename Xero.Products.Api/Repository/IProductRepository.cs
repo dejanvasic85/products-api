@@ -7,10 +7,10 @@ namespace Xero.Products.Api.Repository
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Product>> GetAllProducts();
-        Task<Product> GetProductById(Guid id);
-        Task CreateProduct(Product product);
-        Task DeleteProduct(Guid id);
-        Task UpdateProduct(Product original);
+        Task<IEnumerable<Product>> GetAll();
+        Task<Product> GetById(Guid id);
+        Task Create(Product product);
+        Task Delete(Guid id);
+        Task Update(Product original);
     }
 }

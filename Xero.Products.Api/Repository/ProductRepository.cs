@@ -16,7 +16,7 @@ namespace Xero.Products.Api.Repository
             _connectionFactory = connectionFactory;
         }
 
-        public async Task CreateProduct(Product product)
+        public async Task Create(Product product)
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
@@ -26,7 +26,7 @@ namespace Xero.Products.Api.Repository
             }
         }
 
-        public async Task DeleteProduct(Guid id)
+        public async Task Delete(Guid id)
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
@@ -37,7 +37,7 @@ namespace Xero.Products.Api.Repository
             }
         }
 
-        public async Task<IEnumerable<Product>> GetAllProducts()
+        public async Task<IEnumerable<Product>> GetAll()
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
@@ -45,7 +45,7 @@ namespace Xero.Products.Api.Repository
             }
         }
 
-        public async Task<Product> GetProductById(Guid id)
+        public async Task<Product> GetById(Guid id)
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
@@ -53,7 +53,7 @@ namespace Xero.Products.Api.Repository
             }
         }
 
-        public async Task UpdateProduct(Product product)
+        public async Task Update(Product product)
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
