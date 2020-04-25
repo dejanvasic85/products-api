@@ -114,11 +114,14 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet("{productId}/options/{id}")]
-        public ProductOption GetOption(Guid productId, Guid id)
+        public async Task<ActionResult<ProductOption>> GetOption(Guid productId, Guid id)
         {
-            var option = new ProductOption(id);
-            if (option.IsNew)
-                throw new Exception();
+            var option = await _productOptionRepository.GetProductOption(productId, id);
+
+            if (option == null)
+            {
+                return NotFound();
+            }
 
             return option;
         }
