@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Dapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xero.Products.Api.Configuration;
 using Xero.Products.Api.Repository;
+using Xero.Products.Api.Repository.DapperConfig;
 using Xero.Products.Api.Services;
 
 namespace Xero.Products.Api
@@ -22,9 +24,13 @@ namespace Xero.Products.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSingleton<IProductRepository, ProductRepository>();
-            services.AddSingleton<IProductService, ProductService>();
+            services.AddScoped<IConnectionFactory, ConnectionFactory>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductService, ProductService>();
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
+
+            // Register type handlers for dapper
+            SqlMapper.AddTypeHandler(new GuidTypeHandler());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

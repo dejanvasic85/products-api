@@ -1,29 +1,26 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Dapper;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
-using Xero.Products.Api.Configuration;
 using Xero.Products.Api.Models;
 
 namespace Xero.Products.Api.Repository
 {
-    public interface IProductRepository
-    {
-        Task<IList<Product>> GetAllProducts();
-    }
-
     public class ProductRepository : IProductRepository
     {
-        public ProductRepository(IOptions<DatabaseConfig> databaseConfig)
+        private IConnectionFactory _connectionFactory;
+
+        public ProductRepository(IConnectionFactory connectionFactory)
         {
-            System.Console.WriteLine($"connString {databaseConfig.Value.ConnectionString}");
+            _connectionFactory = connectionFactory;
         }
 
-        public async Task<IList<Product>> GetAllProducts()
+        public async Task<IEnumerable<Product>> GetAllProducts()
         {
-            return await Task.FromResult(new List<Product>
+            using (IDbConnection connection = _connectionFactory.CreateConnection())
             {
-                new Product { Name = "Coca Cola" }
-            });
+                return await connection.QueryAsync<Product>("select * from Products");
+            }
         }
     }
 }

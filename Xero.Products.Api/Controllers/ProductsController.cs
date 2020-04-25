@@ -19,11 +19,9 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet]
-        public Task<IList<Product>> Get()
+        public Task<IEnumerable<Product>> Get()
         {
             return _productService.GetProducts();
-
-            //return new Xero.Products.Api.Models.Products();
         }
 
         [HttpGet("{id}")]

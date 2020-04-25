@@ -8,4 +8,5 @@
 
 ### Todo 
 
-- Add logging (potentially including the request id tracing)
+- Add request logging (potentially including the request id tracing)
+- Unit of Work pattern?

@@ -6,11 +6,6 @@ using Xero.Products.Api.Repository;
 
 namespace Xero.Products.Api.Services
 {
-    public interface IProductService
-    {
-        Task<IList<Product>> GetProducts();
-    }
-
     public class ProductService : IProductService
     {
         private IProductRepository _productRepository;
@@ -20,7 +15,7 @@ namespace Xero.Products.Api.Services
             _productRepository = productRepository;
         }
 
-        public Task<IList<Product>> GetProducts()
+        public Task<IEnumerable<Product>> GetProducts()
         {
             return _productRepository.GetAllProducts();
         }
