@@ -34,6 +34,7 @@ namespace Xero.Products.Api
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductOptionRepository, ProductOptionRepository>();
             services.AddSingleton<IValidator<Product>, ProductValidator>();
+            services.AddSingleton<IValidator<ProductOption>, ProductOptionValidator>();
 
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
 

@@ -346,7 +346,6 @@ namespace Xero.Products.Api.Tests
             {
                 Id = optionId,
                 ProductId = productId,
-                Name = "Option - 123",
             };
 
             _productOptionRepository

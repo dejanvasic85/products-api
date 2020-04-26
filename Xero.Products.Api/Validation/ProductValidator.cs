@@ -19,11 +19,11 @@ namespace Xero.Products.Api.Validation
 
             RuleFor(x => x.Price)
                 .GreaterThan(MinimumPrice)
-                .WithMessage("Price must be greater or equal to 0");
+                .WithMessage("Price must be greater than 0");
 
             RuleFor(x => x.DeliveryPrice)
-                .GreaterThan(MinimumPrice)
-                .WithMessage("Delivery Price must be greater or equal to 0");
+                .GreaterThanOrEqualTo(MinimumPrice)
+                .WithMessage("Delivery Price must be greater than or equal to 0");
         }
     }
 }
