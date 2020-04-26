@@ -2,18 +2,19 @@
 
 After running out of time, I believe the following still needs to be addressed to make a production ready app:
    
-- Service layer to contain the validation and logic of the application
+- Request / Response models to separate business layer and API
+- Error handling to log and not expose potential implementation detail to consumer
+- Unit of Work pattern across repositories to ensure atomic transactions
 - API Versioning
 - Performance - GetProducts should be including (pagination and filtering)
-- Caching configuration
-- Logging (http request logging as well as latency)
-- Logging (errors through middleware)
+- Logging application level logs, http requests, latency and errors
 - Monitoring / Metrics
 - Dockerize (packaging)
 - Integration Tests
-- Case sensitive responses? The requirements display Pascal Casing but the project is defined as regular camelCasing (recommended)
+- ORM choice - Dapper was the quickest in terms of performance and setup but possibly Entity Framework is better choice for code maintability
+- **Opinionated** -> Request and Response Models that would be mapped to business models
  
 
-- Changing the POST (generate ID)
-- Request Models? 
-- Validation
+# Assumptions
+
+- Responses are not case sensitive for the client. The requirements display Pascal Casing but the project is defined as regular camelCasing (recommended)

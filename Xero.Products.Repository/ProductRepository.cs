@@ -16,32 +16,27 @@ namespace Xero.Products.Api.Repository
             _connectionFactory = connectionFactory;
         }
 
-        public async Task Create(Product product)
-        {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
-            {
-                string insertQuery = @"insert into Products (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
-
-                await db.ExecuteAsync(insertQuery, product);
-            }
-        }
-
-        public async Task Delete(Guid id)
-        {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
-            {
-                await db.ExecuteAsync("delete from Products where Id = @Id collate nocase", new
-                {
-                    Id = id
-                });
-            }
-        }
+        private static string SELECT_SQL = "select Id, Name, Description, Price, Deliveryprice from Products";
+        private static string INSERT_SQL = "insert into Products (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
+        private static string UPDATE_SQL = "update Products set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id collate nocase";
+        private static string DELETE_SQL = "delete from Products";
 
         public async Task<IEnumerable<Product>> GetAll()
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                return await db.QueryAsync<Product>("select * from Products");
+                return await db.QueryAsync<Product>(SELECT_SQL);
+            }
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsByName(string name)
+        {
+            using (IDbConnection db = _connectionFactory.CreateConnection())
+            {
+                return await db.QueryAsync<Product>($"{SELECT_SQL} where Name like @Name", new
+                {
+                    Name = $"%{name}%"
+                });
             }
         }
 
@@ -49,7 +44,18 @@ namespace Xero.Products.Api.Repository
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                return await db.QueryFirstOrDefaultAsync<Product>($"select * from Products where Id = '{id}' collate nocase");
+                return await db.QueryFirstOrDefaultAsync<Product>($"{SELECT_SQL} where Id = @Id collate nocase", new
+                {
+                    Id = id
+                });
+            }
+        }
+
+        public async Task Create(Product product)
+        {
+            using (IDbConnection db = _connectionFactory.CreateConnection())
+            {
+                await db.ExecuteAsync(INSERT_SQL, product);
             }
         }
 
@@ -57,8 +63,18 @@ namespace Xero.Products.Api.Repository
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                var updateQuery = "update Products set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id collate nocase";
-                await db.ExecuteAsync(updateQuery, product);
+                await db.ExecuteAsync(UPDATE_SQL, product);
+            }
+        }
+
+        public async Task Delete(Guid id)
+        {
+            using (IDbConnection db = _connectionFactory.CreateConnection())
+            {
+                await db.ExecuteAsync($"{DELETE_SQL} where Id = @Id collate nocase", new
+                {
+                    Id = id
+                });
             }
         }
     }

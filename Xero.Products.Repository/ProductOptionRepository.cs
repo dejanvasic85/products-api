@@ -16,11 +16,16 @@ namespace Xero.Products.Repository
             _connectionFactory = connectionFactory;
         }
 
+        private static readonly string SELECT_SQL = "select Id, ProductId, Name, Description from ProductOptions";
+        private static readonly string INSERT_SQL = "insert into ProductOptions (id, productid, name, description) values (@Id, @ProductId, @Name, @Description)";
+        private static readonly string UPDATE_SQL = "update ProductOptions set name = @Name, description = @Description where id = @Id collate nocase";
+        private static readonly string DELETE_SQL = "delete from ProductOptions";
+
         public async Task<IEnumerable<ProductOption>> GetAll(Guid productId)
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                return await db.QueryAsync<ProductOption>("select * from ProductOptions where productid = @ProductId collate nocase", new
+                return await db.QueryAsync<ProductOption>($"{SELECT_SQL} where productid = @ProductId collate nocase", new
                 {
                     ProductId = productId
                 });
@@ -31,7 +36,7 @@ namespace Xero.Products.Repository
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                return await db.QuerySingleOrDefaultAsync<ProductOption>("select * from ProductOptions where productid = @ProductId and id = @Id collate nocase", new
+                return await db.QuerySingleOrDefaultAsync<ProductOption>($"{SELECT_SQL} where productid = @ProductId and id = @Id collate nocase", new
                 {
                     ProductId = productId,
                     Id = id
@@ -43,9 +48,7 @@ namespace Xero.Products.Repository
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                string insertQuery = $"insert into ProductOptions (id, productid, name, description) values (@Id, @ProductId, @Name, @Description)";
-
-                await db.ExecuteAsync(insertQuery, option);
+                await db.ExecuteAsync(INSERT_SQL, option);
             }
         }
 
@@ -53,8 +56,7 @@ namespace Xero.Products.Repository
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                var updateQuery = "update ProductOptions set name = @Name, description = @Description where id = @Id collate nocase";
-                await db.ExecuteAsync(updateQuery, option);
+                await db.ExecuteAsync(UPDATE_SQL, option);
             }
         }
 
@@ -62,9 +64,20 @@ namespace Xero.Products.Repository
         {
             using (IDbConnection db = _connectionFactory.CreateConnection())
             {
-                await db.ExecuteAsync("delete from ProductOptions where Id = @Id collate nocase", new
+                await db.ExecuteAsync($"{DELETE_SQL} where Id = @Id collate nocase", new
                 {
                     Id = id
+                });
+            }
+        }
+
+        public async Task DeleteByProductId(Guid productId)
+        {
+            using (IDbConnection db = _connectionFactory.CreateConnection())
+            {
+                await db.ExecuteAsync($"{DELETE_SQL} where ProductId = @ProductId collate nocase", new
+                {
+                    ProductId = productId
                 });
             }
         }

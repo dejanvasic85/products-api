@@ -11,5 +11,6 @@ namespace Xero.Products.BusinessLayer
         Task Create(ProductOption option);
         Task Update(ProductOption option);
         Task Delete(Guid id);
+        Task DeleteByProductId(Guid productId);
     }
 }

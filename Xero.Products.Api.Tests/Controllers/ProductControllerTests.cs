@@ -232,6 +232,11 @@ namespace Xero.Products.Api.Tests
                 .Returns(Task.CompletedTask)
                 .Verifiable();
 
+            _productOptionRepository
+                .Setup(call => call.DeleteByProductId(productId))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
             var result = await _productsController.Delete(productId);
 
             Assert.That(result.Value, Is.EqualTo(product));
@@ -264,7 +269,7 @@ namespace Xero.Products.Api.Tests
             var result = await _productsController.GetOptions(productId);
             var okResult = result.Result as OkObjectResult;
 
-            
+
             Assert.That(okResult, Is.Not.Null);
             Assert.That(okResult.Value, Is.TypeOf<ListResponse<ProductOption>>());
         }

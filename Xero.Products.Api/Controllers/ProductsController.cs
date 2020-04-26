@@ -19,9 +19,12 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ListResponse<Product>> Get()
+        public async Task<ListResponse<Product>> Get(string name = "")
         {
-            var products = await _productRepository.GetAll();
+            var products = string.IsNullOrEmpty(name)
+                ? await _productRepository.GetAll()
+                : await _productRepository.GetProductsByName(name);
+
             var response = new ListResponse<Product>(products);
             return response;
         }
@@ -88,6 +91,8 @@ namespace Xero.Products.Api.Controllers
                 return NotFound();
             }
 
+            // Should be wrapped in transaction here... 
+            await _productOptionRepository.DeleteByProductId(id);
             await _productRepository.Delete(id);
 
             return product;
