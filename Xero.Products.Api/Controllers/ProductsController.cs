@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Xero.Products.Api.Models;
 using Xero.Products.BusinessLayer;
 
 namespace Xero.Products.Api.Controllers
@@ -20,9 +21,11 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Product>> Get()
+        public async Task<ListResponse<Product>> Get()
         {
-            return await _productRepository.GetAll();
+            var products = await _productRepository.GetAll();
+            var response = new ListResponse<Product>(products);
+            return response;
         }
 
         [HttpGet("{id}")]
@@ -93,7 +96,7 @@ namespace Xero.Products.Api.Controllers
         }
 
         [HttpGet("{productId}/options")]
-        public async Task<ActionResult<IEnumerable<ProductOption>>> GetOptions(Guid productId)
+        public async Task<ActionResult<ListResponse<ProductOption>>> GetOptions(Guid productId)
         {
             var product = await _productRepository.GetById(productId);
 
@@ -103,8 +106,9 @@ namespace Xero.Products.Api.Controllers
             }
 
             var options = await _productOptionRepository.GetAll(productId);
+            var listResponse = new ListResponse<ProductOption>(options);
 
-            return Ok(options);
+            return Ok(listResponse);
         }
 
         [HttpGet("{productId}/options/{id}")]

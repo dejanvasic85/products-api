@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Xero.Products.Api.Controllers;
+using Xero.Products.Api.Models;
 using Xero.Products.BusinessLayer;
 
 namespace Xero.Products.Api.Tests
@@ -38,7 +39,7 @@ namespace Xero.Products.Api.Tests
         [Test]
         public async Task Get_All_CallsRepository_ReturnsProductList()
         {
-            var results = new List<Product>()
+            var products = new List<Product>()
             {
                 new Product(){Name = "Virus"},
                 new Product(){Name = "Cold"}
@@ -46,12 +47,13 @@ namespace Xero.Products.Api.Tests
 
             _productRepository
                 .Setup(call => call.GetAll())
-                .Returns(Task.FromResult(results.AsEnumerable()))
+                .Returns(Task.FromResult(products.AsEnumerable()))
                 .Verifiable();
 
             var result = await _productsController.Get();
+            var items = result.Items;
 
-            Assert.That(result, Is.EqualTo(results));
+            Assert.That(items, Is.EqualTo(products));
         }
 
         [Test]
@@ -68,7 +70,7 @@ namespace Xero.Products.Api.Tests
         }
 
         [Test]
-        public async Task Get_ById_ReturnsProduct()
+        public async Task Get_ById_ReturnsOk()
         {
             var productId = Guid.NewGuid();
             var product = new Product() { Id = productId };
@@ -250,7 +252,6 @@ namespace Xero.Products.Api.Tests
                 }
             };
 
-
             _productRepository
                 .Setup(call => call.GetById(It.IsAny<Guid>()))
                 .Returns(Task.FromResult(product))
@@ -264,8 +265,9 @@ namespace Xero.Products.Api.Tests
             var result = await _productsController.GetOptions(productId);
             var okResult = result.Result as OkObjectResult;
 
+            
             Assert.That(okResult, Is.Not.Null);
-            Assert.That(okResult.Value, Is.EqualTo(options));
+            Assert.That(okResult.Value, Is.TypeOf<ListResponse<ProductOption>>());
         }
 
         [Test]
@@ -309,32 +311,25 @@ namespace Xero.Products.Api.Tests
         }
 
         [Test]
-        public async Task GetOption_Successful_ReturnsOk()
+        public async Task GetOption_RepositoryReturnsOption_ReturnsOk()
         {
             var productId = Guid.NewGuid();
             var optionId = Guid.NewGuid();
 
-            var product = new Product { Id = productId };
-            var options = new List<ProductOption>
+            var option = new ProductOption
             {
-                new ProductOption { ProductId = productId, Id = optionId }
+                ProductId = productId,
+                Id = optionId,
             };
 
-            _productRepository
-                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
-                .Returns(Task.FromResult(product))
-                .Verifiable();
-
             _productOptionRepository
-                .Setup(call => call.GetAll(It.Is<Guid>(id => id == productId)))
-                .Returns(Task.FromResult(options.AsEnumerable()))
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult(option))
                 .Verifiable();
 
+            var result = await _productsController.GetOption(productId, optionId);
 
-            var result = await _productsController.GetOptions(productId);
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult.Value, Is.EqualTo(options));
+            Assert.That(result.Value, Is.EqualTo(option));
         }
 
         [Test]
