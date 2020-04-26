@@ -9,7 +9,7 @@ I believe the following still needs to be addressed to make a production ready a
 - Monitoring / Metrics
 - Dockerize (packaging)
 - Integration Tests
-- ORM choice - Dapper was the quickest in terms of performance and setup but possibly Entity Framework is better choice for code maintability
+- ORM choice - Dapper was the quickest in terms of performance and setup but possibly Entity Framework is better choice for code maintanability
 - **Opinionated** -> Request and Response Models that would be mapped to business models which could be immutable
 - Error handling to log and not expose potential implementation detail to consumer
  
