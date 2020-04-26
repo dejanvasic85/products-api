@@ -1,6 +1,6 @@
 # Recommendations
 
-After running out of time, I believe the following still needs to be addressed to make a production ready app:
+I believe the following still needs to be addressed to make a production ready app:
 
 - Unit of Work pattern across repositories to ensure atomic transactions
 - API Versioning
