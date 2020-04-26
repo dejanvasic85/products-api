@@ -45,7 +45,10 @@ namespace Xero.Products.Api.Tests
                 new Product(){Name = "Cold"}
             };
 
-            _productRepository.Setup(call => call.GetAll()).Returns(Task.FromResult(results.AsEnumerable())).Verifiable();
+            _productRepository
+                .Setup(call => call.GetAll())
+                .Returns(Task.FromResult(results.AsEnumerable()))
+                .Verifiable();
 
             var result = await _productsController.Get();
 
@@ -55,7 +58,10 @@ namespace Xero.Products.Api.Tests
         [Test]
         public async Task Get_ById_RepositoryReturnsNull_ReturnsNotFound()
         {
-            _productRepository.Setup(call => call.GetById(It.IsAny<Guid>())).Returns(Task.FromResult((Product)null)).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.IsAny<Guid>()))
+                .Returns(Task.FromResult((Product)null))
+                .Verifiable();
 
             var result = await _productsController.Get(id: Guid.NewGuid());
 
@@ -68,7 +74,10 @@ namespace Xero.Products.Api.Tests
             var productId = Guid.NewGuid();
             var product = new Product() { Id = productId };
 
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult(product)).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(product))
+                .Verifiable();
 
             var result = await _productsController.Get(productId);
 
@@ -82,7 +91,10 @@ namespace Xero.Products.Api.Tests
 
             var product = new Product() { Id = productId };
 
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult(product)).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(product))
+                .Verifiable();
 
             var result = await _productsController.Post(product);
 
@@ -97,8 +109,15 @@ namespace Xero.Products.Api.Tests
 
             var product = new Product() { Id = productId };
 
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult((Product)null)).Verifiable();
-            _productRepository.Setup(call => call.Create(It.Is<Product>(p => p == product))).Returns(Task.CompletedTask).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult((Product)null))
+                .Verifiable();
+
+            _productRepository
+                .Setup(call => call.Create(It.Is<Product>(p => p == product)))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
 
             var result = await _productsController.Post(product);
             var createdResult = result.Result as CreatedAtActionResult;
@@ -131,7 +150,10 @@ namespace Xero.Products.Api.Tests
                 Id = productId
             };
 
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult((Product)null)).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult((Product)null))
+                .Verifiable();
 
             var result = await _productsController.Update(productId, productToUpdate);
 
@@ -160,13 +182,19 @@ namespace Xero.Products.Api.Tests
                 DeliveryPrice = 1
             };
 
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult(originalProduct)).Verifiable();
-            _productRepository.Setup(call => call.Update(It.Is<Product>(pr => 
-                pr.Name == productToUpdate.Name &&
-                pr.Description == productToUpdate.Description && 
-                pr.Price == productToUpdate.Price && 
-                pr.DeliveryPrice == productToUpdate.DeliveryPrice
-            ))).Returns(Task.CompletedTask).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(originalProduct))
+                .Verifiable();
+
+            _productRepository
+                .Setup(call => call.Update(It.Is<Product>(pr =>
+                    pr.Name == productToUpdate.Name &&
+                    pr.Description == productToUpdate.Description &&
+                    pr.Price == productToUpdate.Price &&
+                    pr.DeliveryPrice == productToUpdate.DeliveryPrice)))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
 
             var result = await _productsController.Update(productId, productToUpdate);
 
@@ -177,8 +205,11 @@ namespace Xero.Products.Api.Tests
         public async Task Delete_RepositoryReturnsNull_ReturnsNotFound()
         {
             var productId = Guid.NewGuid();
-          
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult((Product)null)).Verifiable();
+
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult((Product)null))
+                .Verifiable();
 
             var result = await _productsController.Delete(productId);
 
@@ -191,8 +222,15 @@ namespace Xero.Products.Api.Tests
             var productId = Guid.NewGuid();
             var product = new Product { Id = productId };
 
-            _productRepository.Setup(call => call.GetById(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult(product)).Verifiable();
-            _productRepository.Setup(call => call.Delete(It.Is<Guid>(id => id == productId))).Returns(Task.CompletedTask).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(product))
+                .Verifiable();
+
+            _productRepository
+                .Setup(call => call.Delete(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
 
             var result = await _productsController.Delete(productId);
 
@@ -214,8 +252,15 @@ namespace Xero.Products.Api.Tests
             };
 
 
-            _productRepository.Setup(call => call.GetById(It.IsAny<Guid>())).Returns(Task.FromResult(product)).Verifiable();
-            _productOptionRepository.Setup(call => call.GetAll(It.Is<Guid>(id => id == productId))).Returns(Task.FromResult(options.AsEnumerable())).Verifiable();
+            _productRepository
+                .Setup(call => call.GetById(It.IsAny<Guid>()))
+                .Returns(Task.FromResult(product))
+                .Verifiable();
+
+            _productOptionRepository
+                .Setup(call => call.GetAll(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(options.AsEnumerable()))
+                .Verifiable();
 
             var result = await _productsController.GetOptions(productId);
             var okResult = result.Result as OkObjectResult;
@@ -238,12 +283,231 @@ namespace Xero.Products.Api.Tests
             };
 
 
-            _productRepository.Setup(call => call.GetById(It.IsAny<Guid>())).Returns(Task.FromResult((Product)null)).Verifiable();
-          
+            _productRepository
+                .Setup(call => call.GetById(It.IsAny<Guid>()))
+                .Returns(Task.FromResult((Product)null))
+                .Verifiable();
+
             var result = await _productsController.GetOptions(productId);
 
             Assert.That(result.Result, Is.TypeOf<NotFoundResult>());
         }
 
+        [Test]
+        public async Task GetOption_RepositoryReturnsNullOption_ReturnsNotFound()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult((ProductOption)null))
+                .Verifiable();
+
+            var result = await _productsController.GetOption(productId, optionId);
+
+            Assert.That(result.Result, Is.TypeOf<NotFoundResult>());
+        }
+
+        [Test]
+        public async Task GetOption_Successful_ReturnsOk()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            var product = new Product { Id = productId };
+            var options = new List<ProductOption>
+            {
+                new ProductOption { ProductId = productId, Id = optionId }
+            };
+
+            _productRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(product))
+                .Verifiable();
+
+            _productOptionRepository
+                .Setup(call => call.GetAll(It.Is<Guid>(id => id == productId)))
+                .Returns(Task.FromResult(options.AsEnumerable()))
+                .Verifiable();
+
+
+            var result = await _productsController.GetOptions(productId);
+            var okResult = result.Result as OkObjectResult;
+
+            Assert.That(okResult.Value, Is.EqualTo(options));
+        }
+
+        [Test]
+        public async Task CreateOption_Successful_ReturnsBadRequest()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            var option = new ProductOption
+            {
+                Id = optionId,
+                ProductId = productId,
+                Name = "Option - 123",
+            };
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult((ProductOption)null))
+                .Verifiable();
+
+            _productOptionRepository
+                .Setup(call => call.Create(It.Is<ProductOption>(opt => opt == option)))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            var result = await _productsController.CreateOption(productId, option);
+
+            var createdResult = result.Result as CreatedAtActionResult;
+
+            Assert.That(createdResult, Is.Not.Null);
+            Assert.That(createdResult.Value, Is.EqualTo(option));
+            Assert.That(createdResult.ActionName, Is.EqualTo("GetOption"));
+        }
+
+        [Test]
+        public async Task CreateOption_OptionIdExists_ReturnsBadRequest()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            var option = new ProductOption
+            {
+                Id = optionId
+            };
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult(option))
+                .Verifiable();
+
+            var result = await _productsController.CreateOption(productId, option);
+
+            Assert.That(result.Result, Is.TypeOf<BadRequestResult>());
+        }
+
+        [Test]
+        public async Task UpdateOption_RepositoryReturnsNull_ReturnsNotFound()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+            var optionToUpdate = new ProductOption
+            {
+                Id = optionId
+            };
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult((ProductOption)null))
+                .Verifiable();
+
+            var result = await _productsController.UpdateOption(productId, optionId, optionToUpdate);
+
+            Assert.That(result, Is.TypeOf<NotFoundResult>());
+        }
+
+        [Test]
+        public async Task UpdateOption_IdDoesNotMatch_ReturnsBadRequest()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+            var optionToUpdate = new ProductOption
+            {
+                Id = Guid.NewGuid()
+            };
+
+            var result = await _productsController.UpdateOption(productId, optionId, optionToUpdate);
+
+            Assert.That(result, Is.TypeOf<BadRequestResult>());
+        }
+
+        [Test]
+        public async Task UpdateOption_SuccessfullyCallsRepository_ReturnsNoContent()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            var updatedOption = new ProductOption
+            {
+                Id = optionId,
+                ProductId = productId,
+                Name = "Option x",
+                Description = "X is good"
+            };
+
+            var originalOption = new ProductOption
+            {
+                Id = optionId,
+                ProductId = productId,
+                Name = "Option z",
+                Description = "Z is good"
+            };
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult(originalOption))
+                .Verifiable();
+
+            _productOptionRepository
+                .Setup(call => call.Update(It.Is<ProductOption>(opt =>
+                    opt.Name == updatedOption.Name &&
+                    opt.Description == updatedOption.Description &&
+                    opt.ProductId == updatedOption.ProductId)))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            var result = await _productsController.UpdateOption(productId, optionId, updatedOption);
+
+            Assert.That(result, Is.TypeOf<NoContentResult>());
+        }
+
+
+        [Test]
+        public async Task DeleteOption_RepositoryReturnsNullOption_ReturnsNotFound()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult((ProductOption)null))
+                .Verifiable();
+
+            var result = await _productsController.DeleteOption(productId, optionId);
+
+            Assert.That(result.Result, Is.TypeOf<NotFoundResult>());
+        }
+
+        [Test]
+        public async Task DeleteOption_SuccessfullyCallsRepository_ReturnsDeletedProductOption()
+        {
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+
+            var option = new ProductOption
+            {
+                Id = optionId,
+                ProductId = productId
+            };
+
+            _productOptionRepository
+                .Setup(call => call.GetById(It.Is<Guid>(id => id == productId), It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.FromResult(option))
+                .Verifiable();
+
+            _productOptionRepository
+                .Setup(call => call.Delete(It.Is<Guid>(id => id == optionId)))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            var result = await _productsController.DeleteOption(productId, optionId);
+
+            Assert.That(result.Value, Is.EqualTo(option));
+        }
     }
 }
