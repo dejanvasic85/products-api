@@ -1,20 +1,9 @@
 ﻿using System;
 
-namespace Xero.Products.Api.Models
+namespace Xero.Products.BusinessLayer
 {
     public class Product
     {
-       
-        public Product(Guid id)
-        {
-            Id = id;
-        }
-
-        public Product() : this(Guid.NewGuid())
-        {
-
-        }
-
         public Guid Id { get; set; }
 
         public string Name { get; set; }

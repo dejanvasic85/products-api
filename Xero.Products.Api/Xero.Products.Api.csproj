@@ -14,4 +14,9 @@
         <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Xero.Products.BusinessLayer\Xero.Products.BusinessLayer.csproj" />
+      <ProjectReference Include="..\Xero.Products.Repository\Xero.Products.Repository.csproj" />
+    </ItemGroup>
+
 </Project>

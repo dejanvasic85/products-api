@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Xero.Products.Api.Models;
-using Xero.Products.Api.Repository;
+using Xero.Products.BusinessLayer;
 
 namespace Xero.Products.Api.Controllers
 {

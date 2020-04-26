@@ -1,18 +1,17 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Options;
 using System;
 using System.Data;
-using Xero.Products.Api.Configuration;
+using Xero.Products.BusinessLayer;
 
-namespace Xero.Products.Api.Repository
+namespace Xero.Products.Repository
 {
     public class ConnectionFactory : IConnectionFactory, IDisposable
     {
-        private readonly IOptions<DatabaseConfig> _config;
+        private readonly IAppConfig _config;
 
         private IDbConnection _dbConnection;
 
-        public ConnectionFactory(IOptions<DatabaseConfig> config)
+        public ConnectionFactory(IAppConfig config)
         {
             _config = config;
         }
@@ -24,18 +23,18 @@ namespace Xero.Products.Api.Repository
                 return _dbConnection;
             }
 
-            _dbConnection = new SqliteConnection(_config.Value.ConnectionString);
+            _dbConnection = new SqliteConnection(_config.DatabaseConfig.ConnectionString);
 
             return _dbConnection;
         }
 
         public void Dispose()
         {
-            if(_dbConnection != null)
+            if (_dbConnection != null)
             {
                 _dbConnection.Dispose();
             }
-          
+
         }
     }
 }

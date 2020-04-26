@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Xero.Products.Api.Models;
+using Xero.Products.BusinessLayer;
 
 namespace Xero.Products.Api.Repository
 {

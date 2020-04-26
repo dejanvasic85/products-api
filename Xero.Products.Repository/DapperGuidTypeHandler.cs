@@ -2,9 +2,9 @@
 using System;
 using System.Data;
 
-namespace Xero.Products.Api.Repository.DapperConfig
+namespace Xero.Products.Repository
 {
-    public class GuidTypeHandler : SqlMapper.TypeHandler<Guid>
+    public class DapperGuidTypeHandler : SqlMapper.TypeHandler<Guid>
     {
         public override void SetValue(IDbDataParameter parameter, Guid guid)
         {

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Xero.Products.Api.Repository
+namespace Xero.Products.BusinessLayer
 {
     public interface IConnectionFactory
     {

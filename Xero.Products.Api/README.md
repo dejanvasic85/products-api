@@ -1,10 +1,17 @@
-﻿# Xero Products API
+﻿# Recommendations
 
-## Improvements (todo):
+After running out of time, I believe the following still needs to be addressed to make a production ready app:
+   
+- Performance - GetProducts should be including (pagination and filtering)
+- Caching
+- Logging (http request logging as well as latency)
+- Logging (errors through middleware)
+- Monitoring / Metrics
+- Dockerize (packaging)
+- Integration Tests
+ 
 
-- Add request logging (potentially including the request id tracing)
-- Unit of Work pattern (transaction commits)
-- Model Validation
-- Bad Request contextual error messages
-- Repository could move to separate project to improve code sharing
-- Integration tests
+
+- Changing the POST (generate ID)
+- Request Models? 
+- Validation
