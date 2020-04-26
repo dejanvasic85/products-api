@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Xero.Products.Api.Models
+namespace Xero.Products.BusinessLayer
 {
     public class ListResponse<T> where T : class
     {

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Xero.Products.Api.Controllers;
-using Xero.Products.Api.Models;
 using Xero.Products.BusinessLayer;
 
 namespace Xero.Products.Api.Tests
