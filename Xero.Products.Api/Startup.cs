@@ -1,11 +1,15 @@
 ﻿using Dapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using Xero.Products.Api.Configuration;
 using Xero.Products.Api.Repository;
+using Xero.Products.Api.Validation;
 using Xero.Products.BusinessLayer;
 using Xero.Products.Repository;
 
@@ -23,12 +27,31 @@ namespace Xero.Products.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddFluentValidation();
+
             services.AddScoped<IAppConfig, AppConfig>();
             services.AddScoped<IConnectionFactory, ConnectionFactory>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductOptionRepository, ProductOptionRepository>();
+            services.AddSingleton<IValidator<Product>, ProductValidator>();
+
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
+
+            // override modelstate
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (context) =>
+                {
+                    var errors = context.ModelState.Values.SelectMany(x => x.Errors.Select(p => p.ErrorMessage)).ToList();
+                    var result = new
+                    {
+                        Code = "00009",
+                        Message = "Validation errors",
+                        Errors = errors
+                    };
+                    return new BadRequestObjectResult(result);
+                };
+            });
 
             // Register type handlers for dapper
             SqlMapper.AddTypeHandler(new DapperGuidTypeHandler());

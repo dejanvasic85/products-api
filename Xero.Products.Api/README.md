@@ -1,8 +1,7 @@
 ﻿# Recommendations
 
 After running out of time, I believe the following still needs to be addressed to make a production ready app:
-   
-- Request / Response models to separate business layer and API
+
 - Error handling to log and not expose potential implementation detail to consumer
 - Unit of Work pattern across repositories to ensure atomic transactions
 - API Versioning
