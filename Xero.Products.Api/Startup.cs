@@ -31,9 +31,9 @@ namespace Xero.Products.Api
             services.AddScoped<IAppConfig, AppConfig>();
             services.AddScoped<IConnectionFactory, ConnectionFactory>();
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
+            services.AddScoped<IProductService, ProductService>();
             
-            services.AddScoped<IProductOptionRepository, ProductOptionRepository>();
-
+            // Validators
             services.AddSingleton<IValidator<Product>, ProductValidator>();
             services.AddSingleton<IValidator<ProductOption>, ProductOptionValidator>();
 
@@ -57,6 +57,7 @@ namespace Xero.Products.Api
 
             // Register type handlers for dapper
             SqlMapper.AddTypeHandler(new DapperGuidTypeHandler());
+            SqlMapper.AddTypeHandler(new DapperDecimalTypeHandler());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

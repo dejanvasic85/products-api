@@ -16,4 +16,17 @@ namespace Xero.Products.Repository
             return new Guid(value.ToString());
         }
     }
+
+    public class DapperDecimalTypeHandler : SqlMapper.TypeHandler<decimal>
+    {
+        public override void SetValue(IDbDataParameter parameter, decimal value)
+        {
+            parameter.Value = value;
+        }
+
+        public override decimal Parse(object value)
+        {
+            return Convert.ToDecimal(value);
+        }
+    }
 }

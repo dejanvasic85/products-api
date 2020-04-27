@@ -98,13 +98,14 @@ namespace Xero.Products.BusinessLayer
             }
         }
 
-        public async Task<ProductOption> CreateProductOption(ProductOption productOption)
+        public async Task<ProductOption> CreateProductOption(Guid productId, ProductOption productOption)
         {
             using (var unitOfWork = _unitOfWorkFactory.CreateUnitOfWork())
             {
                 var newOption = new ProductOption
                 {
                     Id = Guid.NewGuid(),
+                    ProductId = productId,
                     Name = productOption.Name,
                     Description = productOption.Description,
                 };

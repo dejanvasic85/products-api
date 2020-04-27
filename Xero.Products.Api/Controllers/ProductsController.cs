@@ -118,15 +118,15 @@ namespace Xero.Products.Api.Controllers
         [HttpPost("{productId}/options")]
         public async Task<ActionResult<ProductOption>> CreateOption(Guid productId, ProductOption option)
         {
-            var existingOption = await _productService.GetProductOption(productId, option.Id);
-            if (existingOption != null)
+            var product = await _productService.GetProductById(productId);
+            if (product == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            await _productService.CreateProductOption(option);
+            var newOption = await _productService.CreateProductOption(productId, option);
 
-            return CreatedAtAction(nameof(GetOption), new { productId, id = option.Id }, option);
+            return CreatedAtAction(nameof(GetOption), new { productId, id = newOption.Id }, newOption);
         }
 
         [HttpPut("{productId}/options/{id}")]

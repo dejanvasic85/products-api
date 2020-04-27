@@ -15,7 +15,7 @@ namespace Xero.Products.BusinessLayer
 
         Task<IEnumerable<ProductOption>> GetProductOptions(Guid productId);
         Task<ProductOption> GetProductOption(Guid productId, Guid id);
-        Task<ProductOption> CreateProductOption(ProductOption productOption);
+        Task<ProductOption> CreateProductOption(Guid productId, ProductOption productOption);
         Task UpdateProductOption(Guid productId, ProductOption productOption);
         Task DeleteProductOption(Guid id);
     }

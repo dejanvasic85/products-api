@@ -16,7 +16,7 @@ namespace Xero.Products.Repository
             _dbConnection = dbConnection;
         }
 
-        private static string SELECT_SQL = "select Id, Name, Description, Price, Deliveryprice from Products";
+        private static string SELECT_SQL = "select Id, Name, Description, Price, DeliveryPrice from Products";
         private static string INSERT_SQL = "insert into Products (id, name, description, price, deliveryprice) values (@Id, @Name, @Description, @Price, @DeliveryPrice)";
         private static string UPDATE_SQL = "update Products set name = @Name, description = @Description, price = @Price, deliveryprice = @DeliveryPrice where id = @Id collate nocase";
         private static string DELETE_SQL = "delete from Products";

@@ -33,14 +33,10 @@ namespace Xero.Products.Repository
             }
             catch (Exception ex)
             {
+                _dbTransaction.Rollback();
+
                 // Logging should be done centrally in middleware
                 throw ex;
-            }
-            finally
-            {
-                _dbTransaction.Rollback();
-                _dbTransaction.Dispose();
-                _dbConnection.Dispose();
             }
         }
 
