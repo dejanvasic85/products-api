@@ -18,6 +18,7 @@ namespace Xero.Products.Api.Tests
         private MockRepository _mockRepository;
         private Mock<IProductRepository> _productRepository;
         private Mock<IProductOptionRepository> _productOptionRepository;
+        private Mock<IUnitOfWorkFactory> _unitOfWorkFactory;
 
         [SetUp]
         public void Setup()
@@ -25,8 +26,9 @@ namespace Xero.Products.Api.Tests
             _mockRepository = new MockRepository(MockBehavior.Strict);
             _productRepository = _mockRepository.Create<IProductRepository>();
             _productOptionRepository = _mockRepository.Create<IProductOptionRepository>();
+            _unitOfWorkFactory = _mockRepository.Create<IUnitOfWorkFactory>();
 
-            _productsController = new ProductsController(_productRepository.Object, _productOptionRepository.Object);
+            _productsController = new ProductsController(_unitOfWorkFactory.Object, _productOptionRepository.Object);
         }
 
         [TearDown]

@@ -5,15 +5,15 @@ using System.Data;
 using System.Threading.Tasks;
 using Xero.Products.BusinessLayer;
 
-namespace Xero.Products.Api.Repository
+namespace Xero.Products.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        private IConnectionFactory _connectionFactory;
+        private IDbConnection _dbConnection;
 
-        public ProductRepository(IConnectionFactory connectionFactory)
+        public ProductRepository(IDbConnection dbConnection)
         {
-            _connectionFactory = connectionFactory;
+            _dbConnection = dbConnection;
         }
 
         private static string SELECT_SQL = "select Id, Name, Description, Price, Deliveryprice from Products";
@@ -23,59 +23,43 @@ namespace Xero.Products.Api.Repository
 
         public async Task<IEnumerable<Product>> GetAll()
         {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
-            {
-                return await db.QueryAsync<Product>(SELECT_SQL);
-            }
+
+            return await _dbConnection.QueryAsync<Product>(SELECT_SQL);
+
         }
 
         public async Task<IEnumerable<Product>> GetProductsByName(string name)
         {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
+            return await _dbConnection.QueryAsync<Product>($"{SELECT_SQL} where Name like @Name", new
             {
-                return await db.QueryAsync<Product>($"{SELECT_SQL} where Name like @Name", new
-                {
-                    Name = $"%{name}%"
-                });
-            }
+                Name = $"%{name}%"
+            });
         }
 
         public async Task<Product> GetById(Guid id)
         {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
+            return await _dbConnection.QueryFirstOrDefaultAsync<Product>($"{SELECT_SQL} where Id = @Id collate nocase", new
             {
-                return await db.QueryFirstOrDefaultAsync<Product>($"{SELECT_SQL} where Id = @Id collate nocase", new
-                {
-                    Id = id
-                });
-            }
+                Id = id
+            });
         }
 
         public async Task Create(Product product)
         {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
-            {
-                await db.ExecuteAsync(INSERT_SQL, product);
-            }
+            await _dbConnection.ExecuteAsync(INSERT_SQL, product);
         }
 
         public async Task Update(Product product)
         {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
-            {
-                await db.ExecuteAsync(UPDATE_SQL, product);
-            }
+            await _dbConnection.ExecuteAsync(UPDATE_SQL, product);
         }
 
         public async Task Delete(Guid id)
         {
-            using (IDbConnection db = _connectionFactory.CreateConnection())
+            await _dbConnection.ExecuteAsync($"{DELETE_SQL} where Id = @Id collate nocase", new
             {
-                await db.ExecuteAsync($"{DELETE_SQL} where Id = @Id collate nocase", new
-                {
-                    Id = id
-                });
-            }
+                Id = id
+            });
         }
     }
 }

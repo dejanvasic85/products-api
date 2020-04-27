@@ -12,21 +12,26 @@ namespace Xero.Products.Api.Controllers
         private IProductRepository _productRepository;
         private IProductOptionRepository _productOptionRepository;
 
-        public ProductsController(IProductRepository productRepository, IProductOptionRepository productOptionRepository)
+        private IUnitOfWorkFactory _unitOfWorkFactory;
+
+        public ProductsController(IUnitOfWorkFactory unitOfWorkFactory, IProductOptionRepository productOptionRepository)
         {
-            _productRepository = productRepository;
             _productOptionRepository = productOptionRepository;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         [HttpGet]
         public async Task<ListResponse<Product>> Get(string name = "")
         {
-            var products = string.IsNullOrEmpty(name)
-                ? await _productRepository.GetAll()
-                : await _productRepository.GetProductsByName(name);
+            using (var unitOfWork = _unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var products = string.IsNullOrEmpty(name)
+               ? await unitOfWork.ProductRepository.GetAll()
+               : await unitOfWork.ProductRepository.GetProductsByName(name);
 
-            var response = new ListResponse<Product>(products);
-            return response;
+                var response = new ListResponse<Product>(products);
+                return response;
+            }
         }
 
         [HttpGet("{id}")]

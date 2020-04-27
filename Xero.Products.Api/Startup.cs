@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Xero.Products.Api.Configuration;
-using Xero.Products.Api.Repository;
 using Xero.Products.Api.Validation;
 using Xero.Products.BusinessLayer;
 using Xero.Products.Repository;
@@ -31,8 +30,10 @@ namespace Xero.Products.Api
 
             services.AddScoped<IAppConfig, AppConfig>();
             services.AddScoped<IConnectionFactory, ConnectionFactory>();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
+            
             services.AddScoped<IProductOptionRepository, ProductOptionRepository>();
+
             services.AddSingleton<IValidator<Product>, ProductValidator>();
             services.AddSingleton<IValidator<ProductOption>, ProductOptionValidator>();
 
