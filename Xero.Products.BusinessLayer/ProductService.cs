@@ -60,7 +60,7 @@ namespace Xero.Products.BusinessLayer
                 var originalProduct = await unitOfWork.ProductRepository.GetById(productId);
                 if (originalProduct == null)
                 {
-                    throw new NullReferenceException($"The product to update does not exist. ProductId: {productToUpdate.Id}");
+                    throw new NullReferenceException($"The product to update does not exist. ProductId: {productId}");
                 }
 
                 originalProduct.Name = productToUpdate.Name;

@@ -41,7 +41,7 @@ namespace Xero.Products.Api.Controllers
                 return NotFound();
             }
 
-            return _mapper.Map<Product, ProductResource>(product);
+            return _mapper.Map<Product, ProductResource>(product);  
         }
 
         [HttpPost]
