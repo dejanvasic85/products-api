@@ -9,17 +9,21 @@ namespace Xero.Products.Repository
     {
         private readonly IDbConnection _dbConnection;
         private readonly IDbTransaction _dbTransaction;
-        private IProductRepository _productRepository;
 
+        private IProductRepository _productRepository;
+        private IProductOptionRepository _productOptionRepository;
 
         public UnitOfWork(IConnectionFactory connectionFactory)
         {
             _dbConnection = connectionFactory.CreateConnection();
             _dbConnection.Open();
+
             _dbTransaction = _dbConnection.BeginTransaction();
         }
 
         public IProductRepository ProductRepository => _productRepository ?? (_productRepository = new ProductRepository(_dbTransaction.Connection));
+
+        public IProductOptionRepository ProductOptionRepository => _productOptionRepository ?? (_productOptionRepository = new ProductOptionRepository(_dbTransaction.Connection));
 
         public void Commit()
         {

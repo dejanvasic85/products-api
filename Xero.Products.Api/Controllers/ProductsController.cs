@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+
+using Xero.Products.Api.Resources;
 using Xero.Products.BusinessLayer;
 
 namespace Xero.Products.Api.Controllers
@@ -9,35 +11,24 @@ namespace Xero.Products.Api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IProductRepository _productRepository;
-        private IProductOptionRepository _productOptionRepository;
+        private readonly IProductService _productService;
 
-        private IUnitOfWorkFactory _unitOfWorkFactory;
-
-        public ProductsController(IUnitOfWorkFactory unitOfWorkFactory, IProductOptionRepository productOptionRepository)
+        public ProductsController(IProductService productService)
         {
-            _productOptionRepository = productOptionRepository;
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _productService = productService;
         }
 
         [HttpGet]
         public async Task<ListResponse<Product>> Get(string name = "")
         {
-            using (var unitOfWork = _unitOfWorkFactory.CreateUnitOfWork())
-            {
-                var products = string.IsNullOrEmpty(name)
-               ? await unitOfWork.ProductRepository.GetAll()
-               : await unitOfWork.ProductRepository.GetProductsByName(name);
-
-                var response = new ListResponse<Product>(products);
-                return response;
-            }
+            var products = await _productService.GetProducts(name);
+            return new ListResponse<Product>(products);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> Get(Guid id)
         {
-            var product = await _productRepository.GetById(id);
+            var product = await _productService.GetProductById(id);
 
             if (product == null)
             {
@@ -50,15 +41,9 @@ namespace Xero.Products.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> Post(Product product)
         {
-            var existingProduct = await _productRepository.GetById(product.Id);
-            if (existingProduct != null)
-            {
-                return BadRequest();
-            }
+            var newProduct = await _productService.CreateProduct(product);
 
-            await _productRepository.Create(product);
-
-            return CreatedAtAction(nameof(Get), new { product.Id }, product);
+            return CreatedAtAction(nameof(Get), new { newProduct.Id }, newProduct);
         }
 
         [HttpPut("{id}")]
@@ -69,7 +54,7 @@ namespace Xero.Products.Api.Controllers
                 return BadRequest();
             }
 
-            var original = await _productRepository.GetById(id);
+            var original = await _productService.GetProductById(id);
 
             if (original == null)
             {
@@ -81,7 +66,7 @@ namespace Xero.Products.Api.Controllers
             original.Price = product.Price;
             original.DeliveryPrice = product.DeliveryPrice;
 
-            await _productRepository.Update(original);
+            await _productService.UpdateProduct(original);
 
             return NoContent();
         }
@@ -89,16 +74,14 @@ namespace Xero.Products.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> Delete(Guid id)
         {
-            var product = await _productRepository.GetById(id);
+            var product = await _productService.GetProductById(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            // Should be wrapped in transaction here... 
-            await _productOptionRepository.DeleteByProductId(id);
-            await _productRepository.Delete(id);
+            await _productService.DeleteProduct(id);
 
             return product;
         }
@@ -106,14 +89,14 @@ namespace Xero.Products.Api.Controllers
         [HttpGet("{productId}/options")]
         public async Task<ActionResult<ListResponse<ProductOption>>> GetOptions(Guid productId)
         {
-            var product = await _productRepository.GetById(productId);
+            var product = await _productService.GetProductById(productId);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            var options = await _productOptionRepository.GetAll(productId);
+            var options = await _productService.GetProductOptions(productId);
             var listResponse = new ListResponse<ProductOption>(options);
 
             return Ok(listResponse);
@@ -122,7 +105,7 @@ namespace Xero.Products.Api.Controllers
         [HttpGet("{productId}/options/{id}")]
         public async Task<ActionResult<ProductOption>> GetOption(Guid productId, Guid id)
         {
-            var option = await _productOptionRepository.GetById(productId, id);
+            var option = await _productService.GetProductOption(productId, id);
 
             if (option == null)
             {
@@ -135,13 +118,13 @@ namespace Xero.Products.Api.Controllers
         [HttpPost("{productId}/options")]
         public async Task<ActionResult<ProductOption>> CreateOption(Guid productId, ProductOption option)
         {
-            var existingOption = await _productOptionRepository.GetById(productId, option.Id);
+            var existingOption = await _productService.GetProductOption(productId, option.Id);
             if (existingOption != null)
             {
                 return BadRequest();
             }
 
-            await _productOptionRepository.Create(option);
+            await _productService.CreateProductOption(option);
 
             return CreatedAtAction(nameof(GetOption), new { productId, id = option.Id }, option);
         }
@@ -154,16 +137,13 @@ namespace Xero.Products.Api.Controllers
                 return BadRequest();
             }
 
-            var originalOption = await _productOptionRepository.GetById(productId, id);
+            var originalOption = await _productService.GetProductOption(productId, id);
             if (originalOption == null)
             {
                 return NotFound();
             }
 
-            originalOption.Name = option.Name;
-            originalOption.Description = option.Description;
-
-            await _productOptionRepository.Update(option);
+            await _productService.UpdateProductOption(productId, option);
 
             return NoContent();
         }
@@ -171,14 +151,14 @@ namespace Xero.Products.Api.Controllers
         [HttpDelete("{productId}/options/{id}")]
         public async Task<ActionResult<ProductOption>> DeleteOption(Guid productId, Guid id)
         {
-            var productOption = await _productOptionRepository.GetById(productId, id);
+            var productOption = await _productService.GetProductOption(productId, id);
 
             if (productOption == null)
             {
                 return NotFound();
             }
 
-            await _productOptionRepository.Delete(id);
+            await _productService.DeleteProductOption(id);
 
             return productOption;
         }
