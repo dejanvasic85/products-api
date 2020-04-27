@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Xero.Products.Api.Configuration;
+using Xero.Products.Api.Resources;
 using Xero.Products.Api.Validation;
 using Xero.Products.BusinessLayer;
 using Xero.Products.Repository;
@@ -28,18 +30,27 @@ namespace Xero.Products.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddFluentValidation();
 
-            services.AddScoped<IAppConfig, AppConfig>();
+            // Services
             services.AddScoped<IConnectionFactory, ConnectionFactory>();
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             services.AddScoped<IProductService, ProductService>();
-            
-            // Validators
-            services.AddSingleton<IValidator<Product>, ProductValidator>();
-            services.AddSingleton<IValidator<ProductOption>, ProductOptionValidator>();
 
+            // Validators
+            services.AddSingleton<IValidator<CreateUpdateProductResource>, CreateUpdateProductResourceValidator>();
+            services.AddSingleton<IValidator<CreateUpdateProductOptionResource>, CreateUpdateProductOptionResourceValidator>();
+
+            // Config
+            services.AddScoped<IAppConfig, AppConfig>();
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
 
-            // override modelstate
+            // Mapping
+            services.AddAutoMapper(this.GetType().Assembly);
+
+            // Register type handlers for dapper
+            SqlMapper.AddTypeHandler(new DapperGuidTypeHandler());
+            SqlMapper.AddTypeHandler(new DapperDecimalTypeHandler());
+
+            // Bad Request Response Middleware
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = (context) =>
@@ -54,10 +65,6 @@ namespace Xero.Products.Api
                     return new BadRequestObjectResult(result);
                 };
             });
-
-            // Register type handlers for dapper
-            SqlMapper.AddTypeHandler(new DapperGuidTypeHandler());
-            SqlMapper.AddTypeHandler(new DapperDecimalTypeHandler());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

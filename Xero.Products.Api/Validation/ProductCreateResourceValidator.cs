@@ -1,18 +1,14 @@
 ﻿using FluentValidation;
-using Xero.Products.BusinessLayer;
+using Xero.Products.Api.Resources;
 
 namespace Xero.Products.Api.Validation
 {
-    public class ProductValidator : AbstractValidator<Product>
+    public class CreateUpdateProductResourceValidator : AbstractValidator<CreateUpdateProductResource>
     {
         private static readonly decimal MinimumPrice = 0;
 
-        public ProductValidator()
+        public CreateUpdateProductResourceValidator()
         {
-            RuleFor(x => x.Id)
-                .NotEmpty()
-                .WithMessage("Id is mandatory");
-
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage("Name is mandatory");

@@ -53,11 +53,11 @@ namespace Xero.Products.BusinessLayer
             }
         }
 
-        public async Task UpdateProduct(Product productToUpdate)
+        public async Task UpdateProduct(Guid productId, Product productToUpdate)
         {
             using (var unitOfWork = _unitOfWorkFactory.CreateUnitOfWork())
             {
-                var originalProduct = await unitOfWork.ProductRepository.GetById(productToUpdate.Id);
+                var originalProduct = await unitOfWork.ProductRepository.GetById(productId);
                 if (originalProduct == null)
                 {
                     throw new NullReferenceException($"The product to update does not exist. ProductId: {productToUpdate.Id}");
@@ -117,14 +117,14 @@ namespace Xero.Products.BusinessLayer
             }
         }
 
-        public async Task UpdateProductOption(Guid productId, ProductOption productOption)
+        public async Task UpdateProductOption(Guid productId, Guid optionId, ProductOption productOption)
         {
             using (var unitOfWork = _unitOfWorkFactory.CreateUnitOfWork())
             {
-                var originalOption = await unitOfWork.ProductOptionRepository.GetById(productId, productOption.Id);
+                var originalOption = await unitOfWork.ProductOptionRepository.GetById(productId, optionId);
                 if (originalOption == null)
                 {
-                    throw new NullReferenceException($"Unable to retrieve product option by id {productOption.Id} and productId {productId}");
+                    throw new NullReferenceException($"Unable to retrieve product option by id {optionId} and productId {productId}");
                 }
 
                 originalOption.Name = productOption.Name;
