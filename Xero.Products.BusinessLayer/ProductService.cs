@@ -69,6 +69,7 @@ namespace Xero.Products.BusinessLayer
                 originalProduct.DeliveryPrice = productToUpdate.DeliveryPrice;
 
                 await unitOfWork.ProductRepository.Update(originalProduct);
+                unitOfWork.Commit();
             }
         }
 
