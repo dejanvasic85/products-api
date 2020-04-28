@@ -16,6 +16,7 @@ I believe the following still needs to be addressed to make a production ready a
 
 - The POST methods should create a new ID on the server rather than the client
 - Responses are not case sensitive for the client. The requirements display Pascal Casing but the project is defined as regular camelCasing (recommended)
+- Another naming convention for models returned by controllers are Resources
 
 
 # refactor-this
